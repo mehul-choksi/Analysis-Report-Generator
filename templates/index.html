@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+	<style>
+		.split {
+		  height: 100%;
+		  width: 50%;
+		  position: fixed;
+		  z-index: 1;
+		  top: 0;
+		  overflow-x: hidden;
+		  padding-top: 20px;
+		}
+
+		.left {
+		  left: 0;
+		  background-color: #add8e6;
+		}
+
+		.right {
+		  right: 0;
+		  background-color: #90ee90;
+		}
+
+		.centered {
+		  position: absolute;
+		  top: 50%;
+		  left: 50%;
+		  transform: translate(-50%, -50%);
+		  text-align: center;
+		}
+	</style>
+
+</head>
+
+<title>Homepage</title>
+<body style="padding-left:30px;">
+
+	<div class="split left">
+	  <div class="centered">
+	    <img src="../static/pdftocsvLogo.jpg" alt="Extraction Logo" width="200" height="100">
+	    <h2>Convert pdf to csv file</h2>
+	    <a href = "{{ url_for('extractor_page') }}">Goto page</a>
+	  </div>
+	</div>
+
+	<div class="split right">
+	  <div class="centered">
+	    <img src="../static/analyticsLogo.jpg" alt="Analytics Logo" width = "200" height = "130">
+	    <h2>Perform analytics on a csv file</h2>
+	    <a href = "{{ url_for('analytics_page') }}">Goto page</a>	    
+	  </div>
+	</div>
+
+</body>
+</html>

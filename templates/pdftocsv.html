@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<title>Pdf Extractor</title>
+<body style="padding-left:30px;">
+<h2>University Pdf to CSV</h2>
+<p>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+</p>
+
+
+<form method="post" action="/pdftocsv" enctype="multipart/form-data" onsubmit="this.submit(); this.reset(); return false;" style= "width:800px;padding:10px;border:1px solid black;">
+	  <div class="form-group" style="padding-bottom:10px;">
+	    <label for="yearValue">Year</label>
+	    <input type="text" class="form-control" id="year" name="year" aria-describedby="yearHelp" placeholder="Enter the year" style="width: 200px;" >
+	    <small id="yearHelp" class="form-text text-muted">Must be between 1 to 4</small>
+	  </div>
+	  
+	  <div class="form-group" style="padding-bottom:10px;">
+	    <label for="semesterValue">Semester</label>
+	    <input type="text" class="form-control" id="semester" name="semester" aria-describedby="semesterHelp" placeholder="Semester" style="width: 200px;">
+		<small id="semesterHelp" class="form-text text-muted">Must be between 1 or 2</small>
+	  </div>
+	
+	<div class="form-group" style="padding-bottom:10px;">
+	    <label for="exampleFormControlFile1">Upload the input pdf here</label>
+		<label class="btn btn-default btn-file">
+			Browse <input type="file" style="display: none;">
+			<input type="file" class="form-control-file" id="inputFile" name="file" autocomplete="off" required>
+		</label>		
+	</div>
+	<div class="form-group">
+		<input type="submit" class="input-button-submit" value="Submit">
+	</div>
+</form>
+
+
+
+</body>
+</html>
