@@ -74,7 +74,7 @@ def pdf_extractor():
 			semester = request.form['semester']
 			print("java -jar runner.jar " + filename + " comp " + year + " " + semester)
 			os.system("java -jar runner.jar " + filename + " comp " + year + " " + semester)
-			time.sleep(5)
+			#time.sleep(5)
 			extracted_file = filename.split('.')[0]+".csv"
 			print(extracted_file)
 			return send_file(extracted_file, as_attachment=True)
@@ -136,21 +136,58 @@ def visualizer(filename,year,sem):
 	data = pd.read_csv(filename)
 	subjects,pracs,grades = set_config(year,sem)
 	filename = filename.split('/')[-1].split('.')[0]
-	subjects_df = data.filter(subjects,axis = 1)
-	pracs_df = data.filter(pracs, axis = 1)
-	grades_df = data.filter(grades, axis = 1)
+	sub_list = []
+	prac_list = []
 
-	stats = subjects_df.describe()
-	stats.to_html('subjects.html')
+	print('\nSubjects len: ', len(subjects))
+	if len(subjects) > 5:
+		n = len(subjects)
+		for i in range(0,n,5):
+			subjects_df = data.filter(subjects[i:min(n,i+5)],axis=1)
+			stats = subjects_df.describe()
+			stats.to_html('subjects_'+ str(int(i/5)) +'.html')
+			sub_list.append('subjects_'+ str(int(i/5)) +'.html')
+	else:
+		subjects_df = data.filter(subjects,axis = 1)
+		stats = subjects_df.describe()
+		stats.to_html('subjects.html')
+		sub_list.append('subjects.html')
+
+	pracs_df = data.filter(pracs, axis = 1)
 	pracs_df.rename(columns={'BE_PROJ_STAGE1': 'BP1', 'BE_PROJ_STAGE2_TW':'BP2_TW', 'BE_PROJ_STAGE2_OR' : 'BP2_OR'}, inplace=True)
-	stats = pracs_df.describe()
-	print("pracs_df columns", pracs_df.columns)
-	stats.to_html('pracs.html')
+	if len(pracs) > 5:
+		n = len(pracs)
+		for i in range(0,n,5):
+			pracs_df = data.filter(pracs[i:min(n,i+5)],axis=1)
+			stats = pracs_df.describe()
+			stats.to_html('pracs_'+ str(int(i/5)) +'.html')
+			prac_list.append('pracs_'+ str(int(i/5)) +'.html')
+	else:
+		pracs_df = data.filter(subjects,axis = 1)
+		stats = pracs_df.describe()
+		stats.to_html('pracs.html')
+		prac_list.append('pracs.html')
+
+	grades_df = data.filter(grades, axis = 1)
+	#print("pracs_df columns", pracs_df.columns)
+	
 	stats = grades_df.describe()
 	stats.to_html('grades.html')
-	process_html(['subjects.html', 'pracs.html', 'grades.html'])
+
+	process_list = []
+	for sub in sub_list:
+		process_list.append(sub)
+
+	for prac in prac_list:
+		process_list.append(prac)
+
+	process_list.append('grades.html')
+
+	process_html(process_list)
 	HTML('merged_tables.html').write_pdf('temp_stats.pdf')
 	
+	subjects_df = data.filter(subjects,axis=1)
+	pracs_df = data.filter(pracs,axis=1)
 	bar_charts_theory = plot_bar_charts(subjects_df, 1)
 	
 	pp = PdfPages('temp_plots.pdf')
@@ -167,14 +204,15 @@ def visualizer(filename,year,sem):
 	#heatmap = plot_heatmap(pracs_df)
 	#pp.savefig(heatmap)'''
 
-	pie_charts = plot_pie_charts(grades_df)
+	if year == 4 and sem == 2:
+		pie_charts = plot_pie_charts(grades_df)
+		for curr in pie_charts:
+			try:
+				pp.savefig(curr)
+				curr.close()
+			except:
+				continue
 	
-	for curr in pie_charts:
-		try:
-			pp.savefig(curr)
-			curr.close()
-		except:
-			continue
 	pp.close()
 	
 	#merge pdfs
@@ -189,6 +227,12 @@ def visualizer(filename,year,sem):
 	merger.close()
 	os.system("rm temp_stats.pdf")
 	os.system("rm temp_plots.pdf")
+
+	for subject in sub_list:
+		os.system("rm "+ subject)
+
+	for practical in prac_list:
+		os.system("rm " + practical)
 	
 	return filename+"_analysis.pdf"
 
@@ -222,7 +266,7 @@ def plot_bar_charts(subjects, mode):
 		print("plotting Subject: ", subject)
 
 		#print("Data: " , data)
-		if subject == 'BP2_TW':
+		if subject == 'BP2_TW' or subject == 'BE_PROJ_STAGE2_TW':
 			continue
 		
 		score_map = {}		
